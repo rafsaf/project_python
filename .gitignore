@@ -1,3 +1,5 @@
 database.db
 database.db-journal
 **.db
+*.pyc
+*.pyo

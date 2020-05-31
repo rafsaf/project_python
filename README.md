@@ -21,14 +21,13 @@ virtualenv venv
 source venv/bin/activate
 pip3 install -r requirements.txt
 ```
-Aby korzystać z możliwości obsługi bazy danych Sqlite3 będzie też potrzebny program Sqlite Browser
+Aby korzystać z możliwości graficznej obsługi bazy danych Sqlite3 będzie też potrzebny program [Sqlite Browser](https://sqlitebrowser.org/)
 
 ```linux
 sudo apt-get install sqlitebrowser
 ```
 
-Następnie, aby utworzyć gotową bazę danych sqlite i móc ją obsługiwać:
-W utworzonym folderze project_python:
+Następnie w utworzonym folderze project_python uruchamiamy setup.py
 
 ```linux
 python3 setup.py

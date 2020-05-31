@@ -1,0 +1,44 @@
+import sqlite3
+
+if __name__ == '__main__':
+    conn = sqlite3.connect('database.db')
+    cur = conn.cursor()
+
+    cur.execute("""CREATE TABLE PODATKI_I_CZYNSZE(
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        CZAS TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        BILANS INTEGER NOT NULL,
+        ADNOTACJA TEXT,
+        CHECK(BILANS <=0)
+        );""")
+    cur.execute("""CREATE TABLE DOCHÓD_ZE_SPRZEDAŻY(
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        CZAS TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        BILANS INTEGER NOT NULL,
+        ADNOTACJA TEXT,
+        CHECK(BILANS >=0)
+        );""")
+    cur.execute("""CREATE TABLE PENSJE_PRACOWNIKÓW(
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        CZAS TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        BILANS INTEGER NOT NULL,
+        ADNOTACJA TEXT,
+        CHECK(BILANS <=0)
+        );""")
+    cur.execute("""CREATE TABLE DOPŁATY_I_BONY(
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        CZAS TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        BILANS INTEGER NOT NULL,
+        ADNOTACJA TEXT,
+        CHECK(BILANS >=0)
+        );""")
+    cur.execute("""CREATE TABLE INNE(
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        CZAS TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        BILANS INTEGER NOT NULL,
+        ADNOTACJA TEXT
+        );""")
+
+    cur.close()
+    conn.close()
+

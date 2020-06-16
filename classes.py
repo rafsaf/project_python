@@ -233,6 +233,22 @@ class Draw_plot_one_month:
                                 textcoords="offset points",
                                 ha='center', va='bottom')
 
+        def generate_sum_plot():
+            """ like get_ys_for_plot but for all results together """
+            context:dict = {i:0 for i in range(1,32)}
+            for element in self.podatki.fetch_data_from_database()[0]:
+                context[element[0]] += element[1]
+            for element in self.dochod.fetch_data_from_database()[0]:
+                context[element[0]] += element[1]
+            for element in self.pensje.fetch_data_from_database()[0]:
+                context[element[0]] += element[1]
+            for element in self.inne.fetch_data_from_database()[0]:
+                context[element[0]] += element[1]
+            for key, value in context.items():
+                if key == 31:
+                    continue
+                context[key+1] += value
+            return [value for value in context.values()]
 
 
         # to create list with sum of money
@@ -283,8 +299,9 @@ class Draw_plot_one_month:
         axes[1].plot(xs, self.get_ys_for_plot(self.pensje.fetch_data_from_database()[0]))
         axes[1].plot(xs, self.get_ys_for_plot(self.dochod.fetch_data_from_database()[0]))
         axes[1].plot(xs, self.get_ys_for_plot(self.inne.fetch_data_from_database()[0]))
+        axes[1].plot(xs, generate_sum_plot())
         axes[1].set_xticks([1,5,10,15,20,25,31])
-        axes[1].legend([self.podatki, self.pensje, self.dochod, self.inne])
+        axes[1].legend([self.podatki, self.pensje, self.dochod, self.inne, "Łącznie"])
 
         plt.show()
 

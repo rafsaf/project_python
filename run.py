@@ -37,14 +37,14 @@ def getResult ():
     x1 = entry1.get()
     if x1[0]=="T":
         try:
-            print_result(classes.Month_text_or_plot_sum_up(int(x1[1:])).return_text_for_month())
-        except Exception:
-            pass
+            print_result(classes.Month_text_sum_up(int(x1[1:])).return_text_for_month())
+        except Exception as e:
+            print(e)
     elif x1[0] == "W":
         try:
             classes.Draw_plot_one_month(int(x1[1:])).draw()
-        except Exception:
-            pass
+        except Exception as e:
+            print(e)
     if x1 == "3T":
         print_result(classes.Month_text_sum_up().return_text_for_3_last_months())
 

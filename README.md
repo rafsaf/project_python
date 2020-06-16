@@ -301,3 +301,23 @@ getResult()
 print_result(text='')
     open new window with text
 
+Module tests
+------------
+
+Classes
+-------
+Test_Bilans
+    testing class Bilans
+
+    Static methods
+    --------------
+    test_get_another_month
+        testing if method returns correct months
+    
+Test_draw_plot_one_month
+    testing class Draw_plot_one_month
+
+    Static methods
+    --------------
+    test_get_ys_for_plot
+        testing if method return correct list from given list

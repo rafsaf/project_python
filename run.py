@@ -25,7 +25,7 @@ root= tk.Tk()
 canvas1 = tk.Canvas(root, width = 800, height = 600)
 canvas1.pack()
 
-label1 = tk.Label(root, text='Wpisz tekst by uzyksać rezultat, L-liczba:\n\nWL - by zobaczyć wykres miesiąca\n np. L0 -aktualny, L-1 - poprzedni\n\nTL by zobaczyć podsumowanie tekstowe miesiąca\n np. T-2 - przedostatni miesiąc \n\n 3T by zobaczyć podsumowanie tekstowe 3 ostatnich miesięcy')
+label1 = tk.Label(root, text='Wpisz tekst by uzyksać rezultat, L-liczba:\n\nWL - by zobaczyć wykres miesiąca\n np. W0 -aktualny, W-1 - poprzedni\n\nTL by zobaczyć podsumowanie tekstowe miesiąca\n np. T-2 - przedostatni miesiąc \n\n 3T by zobaczyć podsumowanie tekstowe 3 ostatnich miesięcy')
 label1.config(font=('helvetica', 11))
 canvas1.create_window(400, 200, window=label1)
 

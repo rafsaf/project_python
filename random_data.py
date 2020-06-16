@@ -1,4 +1,4 @@
-
+""" Plik generujący losowe dane do bazy danych """
 
 from random import randint
 import sqlite3

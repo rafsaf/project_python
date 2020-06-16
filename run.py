@@ -1,4 +1,6 @@
 """ Run program, opens menu window with options """
+import os
+
 import tkinter as tk
 import matplotlib.pyplot as plt
 

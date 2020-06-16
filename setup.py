@@ -1,4 +1,4 @@
-""" Plik instalacyjny, w pierwszym uruchomieniu tworzy tabele w bazie danych(i baze jesli jej nie ma), w pp. pojawia się blad że tabele juz istnieja """
+""" Plik instalacyjny, w pierwszym uruchomieniu tworzy tabele w bazie danych(i baze jesli jej nie ma), w pp. tabele juz istnieja wiec program nie robi nic. """
 import sqlite3
 
 
@@ -38,10 +38,3 @@ if __name__ == '__main__':
         conn.close()
     except Exception:
         pass
-
-
-import os
-import sys
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATABASE_PATH = os.path.join(BASE_DIR, 'database.db')

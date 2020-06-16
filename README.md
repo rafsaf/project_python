@@ -30,6 +30,7 @@ Następnie w utworzonym folderze project_python uruchamiamy setup.py
 ```linux
 python3 setup.py
 ```
+# Dokumentacja
 
 Module classes
 --------------
@@ -271,3 +272,32 @@ Podatki_i_czynsze
     month_end
 
     month_start
+
+Module setup
+------------
+Plik instalacyjny, w pierwszym uruchomieniu tworzy tabele w bazie danych(i baze jesli jej nie ma), w pp. tabele juz istnieja wiec program nie robi nic.
+
+Module run
+----------
+Run program, opens menu window with options 
+
+Variables
+---------
+button1
+
+canvas1
+
+entry1
+
+label1
+
+root
+
+Functions
+---------
+getResult()
+    open window with text or open plot window
+
+print_result(text='')
+    open new window with text
+

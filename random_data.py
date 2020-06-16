@@ -13,7 +13,7 @@ tables=[
     'PENSJE_PRACOWNIKOW',
     'PODATKI_I_CZYNSZE',
 ]
-for i in range(10000):
+for i in range(2400):
     table = randint(0,3)
     month = randint(1,9)
     day = randint(1,28)
@@ -28,7 +28,10 @@ for i in range(10000):
         money = 5*money
     date = datetime.date(year=2020,month=month, day=day)
     date = datetime.date.strftime(date, "%Y-%m-%d")
-    print("INSERT INTO {} VALUES({},'{}',{},'');".format(tables[table], i, date, money))
+    cur.execute("INSERT INTO {} VALUES({},'{}',{},'');".format(tables[table], i, date, money))
+
+conn.commit()
+conn.close()
 
     
 

@@ -1,57 +1,55 @@
+""" Run program, opens menu window with options """
 import tkinter as tk
 import matplotlib.pyplot as plt
 
-root = tk.Tk()
-S = tk.Scrollbar(root)
-T = tk.Text(root, height=60, width=120)
-S.pack(side=tk.RIGHT, fill=tk.Y)
-T.pack(side=tk.LEFT, fill=tk.Y)
-S.config(command=T.yview)
-T.config(yscrollcommand=S.set)
-quote = """HAMLET: To be, or not to be--that is the question:
-Whether 'tis nobler in the mind to suffer
-The slings and arrows of outrageous fortune
-Or to take arms against a sea of troubles
-And by opposing end them. To die, to sleep--
-No more--and by a sleep to say we end
-The heartache, and the thousand natural shocks
-That flesh is heir to. 'Tis a consummation
-Devoutly to be wished."""
-T.insert(tk.END, quote)
-tk.mainloop()
-x = [2000]
-y = [35000]
-z = [-40000]
-c = [-18900]
-k = [40000]
-labels = ['G1', 'G2', 'G3', 'G4', 'G5']
-aaa = [2000,35000,40000,0,0]
-bbb = [0,0,0,-40000,-18900]
+import classes
 
-def autolabel(rects):
-    """Attach a text label above each bar in *rects*, displaying its height."""
-    for rect in rects:
-        height = rect.get_height()
-        if height != 0:
-            axes[0][0].annotate('{}'.format(height),
-                        xy=(rect.get_x() + rect.get_width() / 2, height),
-                        xytext=(0, 3),  # 3 points vertical offset
-                        textcoords="offset points",
-                        ha='center', va='bottom')
-f, axes = plt.subplots(2, 2)
+def print_result(text=""):
+    """ open new window with text """
+    root = tk.Tk()
+    S = tk.Scrollbar(root)
+    T = tk.Text(root, height=30, width=60)
+    S.pack(side=tk.RIGHT, fill=tk.Y)
+    T.pack(side=tk.LEFT, fill=tk.Y)
+    S.config(command=T.yview)
+    T.config(yscrollcommand=S.set)
+    T.insert(tk.END, text)
+    tk.mainloop()
 
 
-x1 = axes[0][0].bar([0.5,1,1.5,2,2.5], bbb, 0.4, color='red', label='Zyski')
-x2 = axes[0][0].bar([0.5,1,1.5,2,2.5], aaa, 0.4, color='blue', label='Koszty')
-axes[0][0].set_xticks([0.5,1,1.5,2,2.5])
-axes[0][0].set_xticklabels(labels)
-autolabel(x1)
-autolabel(x2)
+""" create menu window """
+root= tk.Tk()
+
+canvas1 = tk.Canvas(root, width = 800, height = 600)
+canvas1.pack()
+
+label1 = tk.Label(root, text='Wpisz tekst by uzyksać rezultat, L-liczba:\n\nWL - by zobaczyć wykres miesiąca\n np. L0 -aktualny, L-1 - poprzedni\n\nTL by zobaczyć podsumowanie tekstowe miesiąca\n np. T-2 - przedostatni miesiąc \n\n 3T by zobaczyć podsumowanie tekstowe 3 ostatnich miesięcy')
+label1.config(font=('helvetica', 11))
+canvas1.create_window(400, 200, window=label1)
+
+entry1 = tk.Entry (root) 
+canvas1.create_window(400, 380, window=entry1)
+
+def getResult ():
+    """ open window with text or open plot window """ 
+    x1 = entry1.get()
+    if x1[0]=="T":
+        try:
+            print_result(classes.Month_text_or_plot_sum_up(int(x1[1:])).return_text_for_month())
+        except Exception:
+            pass
+    elif x1[0] == "W":
+        try:
+            classes.Draw_plot_one_month(int(x1[1:])).draw()
+        except Exception:
+            pass
+    if x1 == "3T":
+        print_result(classes.Month_text_sum_up().return_text_for_3_last_months())
+
+button1 = tk.Button(text='Potwierdź', command=getResult)
+canvas1.create_window(400, 460, window=button1)
+
+root.mainloop()
 
 
 
-axes[0][1].plot(x, y)
-axes[1][0].plot(x, y)
-axes[1][1].plot(x, y)
-
-plt.show()

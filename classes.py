@@ -1,10 +1,14 @@
+""" File with classes used in program """
 
 import sqlite3
 import datetime
+import os
 
 from matplotlib import pyplot as plt
 from dateutil.relativedelta import relativedelta
-from setup import DATABASE_PATH
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATABASE_PATH = os.path.join(BASE_DIR, 'database.db')
 
 
 class Bilans:
@@ -36,10 +40,12 @@ class Podatki_i_czynsze(Bilans):
         self.month_end = self.get_another_month(month_number_int + 1)
 
     def get_name_of_month(self):
+        """ used to get month name from number """
         name = self.month_start.strftime("%B")
         return name
 
     def fetch_data_from_database(self):
+        """ Fetch data about month from database table PODATKI_I_CZYNSZE"""
         conn = sqlite3.connect(DATABASE_PATH)
         cur = conn.cursor()
         cur.execute("select * from Podatki_i_czynsze where czas >=? and czas <=?;",
@@ -55,6 +61,7 @@ class Podatki_i_czynsze(Bilans):
         # result is list of (DAY, MONEY) tuples
         return [result, sum_of_money]
     def get_all_money_from_month(self):
+        """ returns result-number of money in month """
         return self.fetch_data_from_database()[1]
     
     def __str__(self):
@@ -63,7 +70,7 @@ class Podatki_i_czynsze(Bilans):
 
 class Dochod_ze_sprzedazy(Bilans):
     """
-    Represents money spent on taxes etc. in ONE SPECIFIC month 
+    Represents money earned in ONE SPECIFIC month 
 
     Method get_another_month() from parent class Bilans is used to set month to work with
     """
@@ -74,10 +81,12 @@ class Dochod_ze_sprzedazy(Bilans):
         self.month_end = self.get_another_month(month_number_int + 1)
 
     def get_name_of_month(self):
+        """ used to get month name from number """
         name = self.month_start.strftime("%B")
         return name
 
     def fetch_data_from_database(self):
+        """ Fetch data about month from database table DOCHOD_ZE_SPRZEDAZY"""
         conn = sqlite3.connect(DATABASE_PATH)
         cur = conn.cursor()
         cur.execute("select * from Dochod_ze_sprzedazy where czas >=? and czas <=?;",
@@ -93,6 +102,7 @@ class Dochod_ze_sprzedazy(Bilans):
         # result is list of (DAY, MONEY) tuples
         return [result, sum_of_money]
     def get_all_money_from_month(self):
+        """ returns result-number of money in month """
         return self.fetch_data_from_database()[1]
     
     def __str__(self):
@@ -101,7 +111,7 @@ class Dochod_ze_sprzedazy(Bilans):
 
 class Pensje_pracownikow(Bilans):
     """
-    Represents money spent on taxes etc. in ONE SPECIFIC month 
+    Represents money spent on salaries etc. in ONE SPECIFIC month 
 
     Method get_another_month() from parent class Bilans is used to set month to work with
     """
@@ -110,13 +120,15 @@ class Pensje_pracownikow(Bilans):
         super().__init__()
         self.month_start = self.get_another_month(month_number_int)
         self.month_end = self.get_another_month(month_number_int + 1)
-        print(self.month_end)
+
 
     def get_name_of_month(self):
+        """ used to get month name from number """
         name = self.month_start.strftime("%B")
         return name
 
     def fetch_data_from_database(self):
+        """ Fetch data about month from database table PENSJE_PRACOWNIKOW"""
         conn = sqlite3.connect(DATABASE_PATH)
         cur = conn.cursor()
         cur.execute("select * from Pensje_pracownikow where czas >=? and czas <=?;",
@@ -132,15 +144,16 @@ class Pensje_pracownikow(Bilans):
         # result is list of (DAY, MONEY) tuples
         return [result, sum_of_money]
     def get_all_money_from_month(self):
+        """ returns result-number of money in month """
         return self.fetch_data_from_database()[1]
     
     def __str__(self):
-        return "Pensje pracownikow"
+        return "pensje pracownikow"
 
 
 class Inne(Bilans):
     """
-    Represents money spent on taxes etc. in ONE SPECIFIC month 
+    Represents money spent or earned from other districts in ONE SPECIFIC month 
 
     Method get_another_month() from parent class Bilans is used to set month to work with
     """
@@ -151,16 +164,17 @@ class Inne(Bilans):
         self.month_end = self.get_another_month(month_number_int + 1)
 
     def get_name_of_month(self):
+        """ used to get month name from number """
         name = self.month_start.strftime("%B")
         return name
 
     def fetch_data_from_database(self):
+        """ Fetch data about month from database table INNE"""
         conn = sqlite3.connect(DATABASE_PATH)
         cur = conn.cursor()
         cur.execute("select * from Inne where czas >=? and czas <=?;",
                     [self.month_start, self.month_end])
         all_data = cur.fetchall()
-        print(all_data)
         sum_of_money = 0
         result = []
         for data in all_data:
@@ -171,22 +185,42 @@ class Inne(Bilans):
         # result is list of (DAY, MONEY) tuples
         return [result, sum_of_money]
     def get_all_money_from_month(self):
+        """ returns result-number of money in month """
         return self.fetch_data_from_database()[1]
     
+    def get_year(self):
+        return str(self.today.year)
+
+    
     def __str__(self):
-        return "Inne"
+        return "inne"
 
 
 
 class Draw_plot_one_month:
+    """ Class used to represent all money results for specific month, including all sectors
+    
+    draw() method creates pyplot digrams to sum up results"""
 
     def __init__(self, month_number_int=0):
         self.podatki = Podatki_i_czynsze(month_number_int)
         self.dochod = Dochod_ze_sprzedazy(month_number_int)
         self.pensje = Pensje_pracownikow(month_number_int)
         self.inne = Inne(month_number_int)
-    
-    def get_sum_up(self):
+
+    def get_ys_for_plot(self, result_list_from_fetch_data):
+        """ method converting list of (day-how_much_money) tuples from classes """
+        context:dict = {i:0 for i in range(1,32)}
+        for element in result_list_from_fetch_data:
+            context[element[0]] += element[1]
+        for key, value in context.items():
+            if key == 31:
+                continue
+            context[key+1] += value
+        return [value for value in context.values()]
+
+    def draw(self):
+        """ creates pyplot histogram for money results in month """
 
         def autolabel(rects):
             """Attach a text label above each bar in *rects*, displaying its height."""
@@ -235,18 +269,96 @@ class Draw_plot_one_month:
 
         x1 = axes[0].bar([0.5,1,1.5,2,2.5], loss, 0.4, color='red', label='Straty')
         x2 = axes[0].bar([0.5,1,1.5,2,2.5], gains, 0.4, color='blue', label='Zyski')
+        axes[0].legend(["Straty","Zyski"])
         axes[0].set_xticks([0.5,1,1.5,2,2.5])
         axes[0].set_xticklabels(labels)
         autolabel(x1)
         autolabel(x2)
+        title = axes[0].set_title("Podsumowanie: {}, okres {} do {}* (bez początku miesiąca)".format(self.dochod.get_name_of_month(), self.dochod.month_start, self.dochod.month_end))
+        title.set_position([0.5,1.1])
 
-        axes[1].plot([1,1],[2,2])
+
+        xs = [i for i in range(1,32)]
+        axes[1].plot(xs, self.get_ys_for_plot(self.podatki.fetch_data_from_database()[0]))
+        axes[1].plot(xs, self.get_ys_for_plot(self.pensje.fetch_data_from_database()[0]))
+        axes[1].plot(xs, self.get_ys_for_plot(self.dochod.fetch_data_from_database()[0]))
+        axes[1].plot(xs, self.get_ys_for_plot(self.inne.fetch_data_from_database()[0]))
+        axes[1].set_xticks([1,5,10,15,20,25,31])
+        axes[1].legend([self.podatki, self.pensje, self.dochod, self.inne])
+
         plt.show()
 
+class Month_text_sum_up:
+    """ Class used to sum up money results which are represented later by text in tkinter module  """
+    def __init__(self, month_number_int=0):
+        self.podatki = Podatki_i_czynsze(month_number_int)
+        self.dochod = Dochod_ze_sprzedazy(month_number_int)
+        self.pensje = Pensje_pracownikow(month_number_int)
+        self.inne = Inne(month_number_int)
 
+    def return_text_for_month(self):
+        """ text informations about specified month """
+        month = self.podatki.get_name_of_month()
+        podatki = self.podatki.get_all_money_from_month()    
+        dochod = self.dochod.get_all_money_from_month()    
+        pensje = self.pensje.get_all_money_from_month()    
+        inne = self.inne.get_all_money_from_month()
+        year = self.inne.get_year()
+        if inne > 0:
+            sign1 = "+"
+        else:
+            sign1 = "" 
+        result = podatki + dochod + pensje + inne
+        if result > 10000:
+            sign2 = "+"
+            rating = "Dobry rezultat"
+        elif result < 0:
+            sign2 = ""
+            rating = "Zły rezultat"
+        else: 
+            if podatki == 0 and dochod == 0 and pensje == 0 and inne ==0:
+                rating = "Brak danych"
+            else:
+                rating = "Średni rezultat- stagnacja"
+        text_message = "Miesiac: {} {} \nPodatki: {} zł\nDochody: +{} zł\nPensje dla pracowników: {} zł\nInne wydatki: {}{} zł\nŁącznie: {}{} zł\n{}".format(month, year, podatki, dochod, pensje, sign1, inne, sign2, result, rating)
+        
+        return text_message
 
+    def return_text_for_3_last_months(self, number=3):
+        """ text informations about last 3 months 
+        
+        number- int how much months before actual month consider"""
+        podatki = 0
+        dochod = 0
+        pensje = 0
+        inne = 0
+        result = 0
+        month = ""
+        for i in range(-number,1):
+            podatki += Podatki_i_czynsze(i).get_all_money_from_month()
+            dochod += Dochod_ze_sprzedazy(i).get_all_money_from_month()
+            pensje += Pensje_pracownikow(i).get_all_money_from_month()
+            inne += Inne(i).get_all_money_from_month()
+            month += Inne(i).get_name_of_month() + ", "
+        month = month.rstrip(", ")
+        if inne > 0:
+            sign1 = "+"
+        else:
+            sign1 = "" 
+        result = podatki + dochod + pensje + inne
+        if result > 10000:
+            sign2 = "+"
+            rating = "Dobry rezultat"
+        elif result < 0:
+            sign2 = ""
+            rating = "Zły rezultat"
+        else: 
+            if podatki == 0 and dochod == 0 and pensje == 0 and inne ==0:
+                rating = "Brak danych"
+            else:
+                rating = "Średni rezultat- stagnacja"
+        text_message = "Miesiac: {}\nPodatki: {} zł\nDochody: +{} zł\nPensje dla pracowników: {} zł\nInne wydatki: {}{} zł\nŁącznie: {}{} zł\n{}".format(month, podatki, dochod, pensje, sign1, inne, sign2, result, rating)
+        
+        return text_message
+    
 
-
-
-
-x  = Draw_plot_one_month().get_sum_up()
